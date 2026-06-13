@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Processing Payment</title>
+</head>
+<body>
+
+<h3>Redirecting to Payment...</h3>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+var options = {
+    key: "{{key_id}}",
+    amount: {{payment.amount}},
+    currency: "INR",
+    name: "Gavran Express",
+    description: "Order Payment",
+    order_id: "{{payment.id}}",
+
+    handler: function(response){
+
+        fetch('/verify_payment/', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}",
+            },
+            body: JSON.stringify(response)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.status === "success"){
+                window.location.href = "/success/";
+            } else {
+                window.location.href = "/failure/";
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            window.location.href = "/failure/";
+        });
+    }
+};
+
+var rzp = new Razorpay(options);
+rzp.open();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Track Order</title>
+    <meta name="viewport" content="width=device.width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body{
+            background-color: #f8f9fa;
+        }
+        .track-card{
+            max-width:700px;
+            margin:auto;
+            margin-top:80px;
+            padding:30px;
+            border-radius:12px;
+            box-shadow:0 4px 10px rgba(0,0,0,0.1);
+            background-color:white;
+        }
+
+        .step-container{
+            display:flex;
+            justify-content:space-between;
+            position:relative;
+            margin-top:50px;
+        }
+
+        .step-container::before{
+            content:"";
+            position:absolute;
+            top:15px;
+            left:0;
+            width:100%;
+            height:4px;
+            background:#ddd;
+            z-index:0;
+        }
+
+        .step-container::after {
+            content: "";
+            position: absolute;
+             top: 15px;
+            left: 0;
+            height: 4px;
+            background: #28a745;
+            z-index: 0;
+
+                width:
+                {% if order.status == "Pending" %} 0%
+                {% elif order.status == "Confirmed" %} 33%
+                {% elif order.status == "Out for Delivery" %} 66%
+                {% elif order.status == "Delivered" %} 100%
+                {% endif %};
+        }
+
+        .step{
+            text-align:center;
+            position:relative;
+            z-index:1;
+        }
+
+        .step-circle{
+            width:30px;
+            height:30px;
+            border-radius:50%;
+            background:#ddd;
+            margin:auto;
+            line-height:30px;
+            color:white;
+            font-weight:bold;
+        }
+
+        .step.active .step-circle{
+            background:#28a745
+        }
+
+        .step p{
+            margin-top:8px;
+            font-size:14px;
+        }
+
+
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="track-card">
+        <h2 class="text-center mb-4 text-success">Track Your Order</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label">Enter Order ID</label>
+                <input type="text" name="order_id" class="form-control" placeholder="Enter Order ID" required>
+            </div>
+            <button type="submit" class="btn btn-success w-100">Track Order</button>
+        </form>
+
+        {% if order %}
+            <hr class="my-4">
+
+            <h4 class="text-center mb-3">Order Details</h4>
+
+            <p><strong>Order ID:</strong> {{ order.id }}</p>
+            <p><strong>Total Amount:</strong>₹  {{ order.total_amount }}</p>
+            <p><strong>Date:</strong> {{ order.created_at }}</p>
+
+            <h5 class="mt-4">Order Progress</h5>
+
+            <div class="step-container">
+
+                 <!-- Step 1 -->
+                <div class="step {% if order.status|lower != 'cancelled' %}active{% endif %}">
+                    <div class="step-circle">1</div>
+                    <p>📦 Order Placed</p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="step {% if order.status in 'Confirmed Out for Delivery Delivered' %}active{% endif %}">
+                    <div class="step-circle">2</div>
+                    <p>✔ Confirmed</p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="step {% if order.status in 'Out for Delivery Delivered' %}active{% endif %}">
+                    <div class="step-circle">3</div>
+                    <p>🛵 Out for Delivery</p>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="step {% if order.status|lower == 'delivered' %}active{% endif %}">
+                    <div class="step-circle">4</div>
+                    <p>🏠 Delivered</p>
+                </div>
+            </div>
+            <!--Feed-->
+            {% if order.status == "Delivered" %}
+                <div class="text-center mt-4">
+                    <a href="{% url 'feedback' order.id %}" class="btn btn-warning">
+                        ⭐ Give Feedback
+                    </a>
+                </div>
+            {% endif %}
+    
+            {% elif request.method == "POST" %}
+
+            <hr class="my-4">
+
+            <div class="alert alert-danger text-center">
+                Order not found! Please check the Order ID.
+            </div>
+
+        {% endif %}
+</div>
+</body>
+</html>
+

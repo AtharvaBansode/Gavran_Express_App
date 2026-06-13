@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Give Feedback</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-5">
+    <div class="card shadow p-4">
+
+        <h3 class="text-center text-success mb-4">Give Your Feedback</h3>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <!-- Rating -->
+            <div class="mb-3">
+                <label class="form-label"><strong>Rating</strong></label>
+                <select name="rating" class="form-select" required>
+                    <option value="">Select Rating</option>
+                    <option value="5">⭐⭐⭐⭐⭐ - Excellent</option>
+                    <option value="4">⭐⭐⭐⭐ - Good</option>
+                    <option value="3">⭐⭐⭐ - Average</option>
+                </select>
+            </div>
+
+            <!-- Product Quality -->
+            <div class="mb-3">
+                <label class="form-label"><strong>Product Quality</strong></label>
+                <select name="quality" class="form-select" required>
+                    <option value="">Select</option>
+                    <option>Excellent</option>
+                    <option>Good</option>
+                    <option>Average</option>
+                </select>
+            </div>
+
+            <!-- Packaging -->
+            <div class="mb-3">
+                <label class="form-label"><strong>Packaging</strong></label>
+                <select name="packaging" class="form-select" required>
+                    <option value="">Select</option>
+                    <option>Good</option>
+                    <option>Average</option>
+                </select>
+            </div>
+
+            <!-- Comment -->
+            <div class="mb-3">
+                <label class="form-label"><strong>Additional Comments(optional)</strong></label>
+                <textarea name="comment" class="form-control" rows="3" placeholder="write your feedback..."></textarea>
+            </div>
+
+            <!-- Submit button -->
+            <div class="d-grid">
+                <button type="submit" class="btn btn-success">
+                    Submit Feedback
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
+
